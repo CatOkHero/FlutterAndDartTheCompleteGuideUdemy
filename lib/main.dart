@@ -1,7 +1,8 @@
-import 'package:cooking_app/category_meals_screen.dart';
+import 'package:cooking_app/screens/category_meals_screen.dart';
+import 'package:cooking_app/screens/meal_detail_screen.dart';
 import 'package:flutter/material.dart';
 
-import './categories_screen.dart';
+import 'screens/categories_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -17,10 +18,10 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Raleway',
         textTheme: ThemeData.light().textTheme.copyWith(
               bodyText1: TextStyle(
-                color: Color.fromARGB(20, 51, 51, 1),
+                color: Colors.blue,
               ),
               bodyText2: TextStyle(
-                color: Color.fromARGB(20, 51, 51, 1),
+                color: Colors.blue,
               ),
               headline6: TextStyle(
                 fontSize: 20,
@@ -29,10 +30,15 @@ class MyApp extends StatelessWidget {
               ),
             ),
       ),
-      home: CategoriesScreen(),
+      initialRoute: '/',
       routes: {
+        '/': (ctx) => CategoriesScreen(),
         CategoryMealScreen.routeName: (ctx) => CategoryMealScreen(),
+        MealDetailScreen.routeName: (ctx) => MealDetailScreen(),
       },
+      onGenerateRoute: (settings) => MaterialPageRoute(
+        builder: (context) => CategoriesScreen(),
+      ),
     );
   }
 }
