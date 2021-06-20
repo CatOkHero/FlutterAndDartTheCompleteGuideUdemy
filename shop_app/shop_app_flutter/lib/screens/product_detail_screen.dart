@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:shop_app_flutter/models/product.dart';
+import 'package:provider/provider.dart';
+import 'package:shop_app_flutter/providers/products.dart';
 
 class ProductDetailScreen extends StatelessWidget {
-  final Product _product;
-
-  ProductDetailScreen(this._product);
+  static const routeName = "ProductDetailScreen";
 
   @override
   Widget build(BuildContext context) {
+    final id = ModalRoute.of(context).settings.arguments as String;
+    final product = Provider.of<Products>(context)
+        .items
+        .firstWhere((element) => element.id == id);
     return Container(
-      child: null,
+      child: Text(product.title),
     );
   }
 }
