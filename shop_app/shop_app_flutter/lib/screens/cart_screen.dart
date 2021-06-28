@@ -42,7 +42,6 @@ class CartScreen extends StatelessWidget {
                   ),
                   FlatButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, OrdersScreen.routeName);
                       Provider.of<Orders>(context, listen: false).addOrders(
                         cart.items.values.toList(),
                         cart.totalAmount,
