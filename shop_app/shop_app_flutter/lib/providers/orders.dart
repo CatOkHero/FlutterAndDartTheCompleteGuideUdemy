@@ -22,8 +22,17 @@ class Orders with ChangeNotifier {
     return [..._orders];
   }
 
-  void addOrders(List<CartItem> orders, double total) {
-    //_orders.addAll(orders);
+  void addOrders(List<CartItem> products, double total) {
+    _orders.insert(
+      0,
+      OrderItem(
+        id: DateTime.now().toString(),
+        products: products,
+        amount: products.fold(
+            0, (previousValue, element) => previousValue + element.price),
+        dateTime: DateTime.now(),
+      ),
+    );
     notifyListeners();
   }
 
