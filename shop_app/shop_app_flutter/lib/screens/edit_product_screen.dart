@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop_app_flutter/providers/product.dart';
+import 'package:shop_app_flutter/providers/products.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = "EditProcutScreen";
@@ -16,11 +18,29 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _form = GlobalKey<FormState>();
   var _product = Product(
       id: null, title: null, description: null, price: 0.0, imageUrl: null);
+  var _isInit = true;
 
   @override
   void initState() {
     _imageUrlFocusNode.addListener(updateListener);
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final productId = ModalRoute.of(context).settings.arguments as String;
+      if (productId != null) {
+        _product = Provider.of<Products>(context, listen: false)
+            .items
+            .firstWhere((element) => element.id == productId);
+        _imageUrlController.text = _product.imageUrl;
+      }
+
+      _isInit = false;
+    }
+
+    super.didChangeDependencies();
   }
 
   void updateListener() {
@@ -40,7 +60,17 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   void _saveForm() {
-    _form.currentState.save();
+    final isValid = _form.currentState.validate();
+    if (isValid) {
+      _form.currentState.save();
+      if (_product.id == null) {
+        Provider.of<Products>(context, listen: false).addProducts(_product);
+      } else {
+        Provider.of<Products>(context, listen: false).updateProduct(_product);
+      }
+
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -64,6 +94,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           child: ListView(
             children: [
               TextFormField(
+                initialValue: _product.title,
                 decoration: InputDecoration(labelText: 'Title'),
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) {
@@ -71,15 +102,24 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
                 onSaved: (newValue) {
                   _product = Product(
-                    id: null,
+                    id: _product.id,
+                    isFavorite: _product.isFavorite,
                     title: newValue,
                     description: _product.description,
                     price: _product.price,
                     imageUrl: _product.imageUrl,
                   );
                 },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return "Shouldn't be empty";
+                  }
+
+                  return null;
+                },
               ),
               TextFormField(
+                initialValue: _product.price.toString(),
                 decoration: InputDecoration(labelText: 'Price'),
                 keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.next,
@@ -89,15 +129,32 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
                 onSaved: (newValue) {
                   _product = Product(
-                    id: null,
+                    id: _product.id,
+                    isFavorite: _product.isFavorite,
                     title: _product.title,
                     description: _product.description,
                     price: double.parse(newValue),
                     imageUrl: _product.imageUrl,
                   );
                 },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return "Shouldn't be empty";
+                  }
+
+                  if (double.tryParse(value) == null) {
+                    return 'Price should be valid number';
+                  }
+
+                  if (double.parse(value) <= 0.0) {
+                    return 'Price should be grater then 0';
+                  }
+
+                  return null;
+                },
               ),
               TextFormField(
+                initialValue: _product.description,
                 decoration: InputDecoration(labelText: 'Description'),
                 maxLines: 3,
                 textInputAction: TextInputAction.next,
@@ -108,7 +165,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
                 onSaved: (newValue) {
                   _product = Product(
-                    id: null,
+                    id: _product.id,
+                    isFavorite: _product.isFavorite,
                     title: _product.title,
                     description: newValue,
                     price: _product.price,
@@ -155,7 +213,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       },
                       onSaved: (newValue) {
                         _product = Product(
-                          id: null,
+                          id: _product.id,
+                          isFavorite: _product.isFavorite,
                           title: _product.title,
                           description: _product.description,
                           price: _product.price,
