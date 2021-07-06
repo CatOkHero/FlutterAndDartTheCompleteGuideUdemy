@@ -9,7 +9,32 @@ import 'package:shop_app_flutter/widgets/products_grid.dart';
 
 enum PopupEnum { Favorites, All }
 
-class ProductOverviewScreen extends StatelessWidget {
+class ProductOverviewScreen extends StatefulWidget {
+  @override
+  _ProductOverviewScreenState createState() => _ProductOverviewScreenState();
+}
+
+class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
+  var _isInit = true;
+
+  @override
+  void initState() {
+    // Future.delayed(Duration.zero).then((_) {
+    //   Provider.of<Products>(context).fetchAndSetProducts();
+    // });
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      _isInit = false;
+      Provider.of<Products>(context).fetchAndSetProducts();
+    }
+
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     final products = Provider.of<Products>(context, listen: false);
