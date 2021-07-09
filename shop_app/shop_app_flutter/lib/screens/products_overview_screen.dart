@@ -29,7 +29,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   void didChangeDependencies() {
     if (_isInit) {
       _isInit = false;
-      Provider.of<Products>(context).fetchAndSetProducts();
+      Provider.of<Products>(context).fetchAndSetProducts(true);
     }
 
     super.didChangeDependencies();

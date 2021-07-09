@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:shop_app_flutter/providers/auth.dart';
 import 'package:shop_app_flutter/providers/cart.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,6 +21,9 @@ class OrderItem {
 
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
+  Auth _auth;
+
+  Orders(this._auth, this._orders);
 
   List<OrderItem> get orders {
     return [..._orders];
@@ -27,7 +31,7 @@ class Orders with ChangeNotifier {
 
   Future<void> addOrders(List<CartItem> products, double total) async {
     final url =
-        "https://flutter-shop-app-76334-default-rtdb.firebaseio.com/orders.json";
+        "https://flutter-shop-app-76334-default-rtdb.firebaseio.com/orders/${_auth.userId}.json?auth=${_auth.token}";
 
     try {
       final dateTime = DateTime.now();
@@ -67,7 +71,7 @@ class Orders with ChangeNotifier {
 
   Future<void> fetchOreders() async {
     final url =
-        "https://flutter-shop-app-76334-default-rtdb.firebaseio.com/orders.json";
+        "https://flutter-shop-app-76334-default-rtdb.firebaseio.com/orders/${_auth.userId}.json?auth=${_auth.token}";
 
     try {
       final dateTime = DateTime.now();

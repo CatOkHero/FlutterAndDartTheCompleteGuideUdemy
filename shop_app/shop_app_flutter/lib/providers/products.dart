@@ -1,11 +1,37 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'product.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
+import 'package:shop_app_flutter/providers/auth.dart';
+
+class Product with ChangeNotifier {
+  final String id;
+  final String title;
+  final String description;
+  final double price;
+  final String imageUrl;
+  bool isFavorite = false;
+
+  Product(
+      {@required this.id,
+      @required this.title,
+      @required this.description,
+      @required this.price,
+      @required this.imageUrl,
+      this.isFavorite});
+
+  void toggleFavoriteStete() {
+    this.isFavorite = !this.isFavorite;
+    notifyListeners();
+  }
+}
 
 class Products with ChangeNotifier {
   List<Product> _items = [];
+  Auth _auth;
+
+  Products(this._auth, this._items);
 
   var showFavorites = false;
 
@@ -22,9 +48,11 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchAndSetProducts() async {
-    const url =
-        "https://flutter-shop-app-76334-default-rtdb.firebaseio.com/products.json";
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filtering =
+        filterByUser ? '&orderBy="creatorId"&equalTo="${_auth.userId}"' : "";
+    final url =
+        'https://flutter-shop-app-76334-default-rtdb.firebaseio.com/products.json?auth=${_auth.token}$filtering';
     try {
       final response = await http.get(url);
       final List<Product> loadedData = [];
@@ -49,7 +77,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProducts(Product product) async {
     final url =
-        "https://flutter-shop-app-76334-default-rtdb.firebaseio.com/products.json";
+        'https://flutter-shop-app-76334-default-rtdb.firebaseio.com/products.json?auth=${_auth.token}';
 
     try {
       final response = await http.post(
@@ -60,6 +88,7 @@ class Products with ChangeNotifier {
           'price': product.price,
           'imageUrl': product.imageUrl,
           'isFavorite': product.isFavorite,
+          'creatorId': _auth.userId
         }),
       );
 
@@ -82,13 +111,14 @@ class Products with ChangeNotifier {
     final index = _items.indexWhere((element) => element.id == product.id);
     if (index >= 0) {
       final url =
-          "https://flutter-shop-app-76334-default-rtdb.firebaseio.com/products/${product.id}.json";
+          'https://flutter-shop-app-76334-default-rtdb.firebaseio.com/products/${product.id}.json?auth=${_auth.token}';
       await http.patch(url,
           body: json.encode({
             'title': product.title,
             'description': product.description,
             'price': product.price,
-            'imageUrl': product.imageUrl
+            'imageUrl': product.imageUrl,
+            'isFavorite': product.isFavorite
           }));
       _items[index] = product;
       notifyListeners();
@@ -97,7 +127,7 @@ class Products with ChangeNotifier {
 
   void deleteProduct(String productId) {
     final url =
-        "https://flutter-shop-app-76334-default-rtdb.firebaseio.com/products/${productId}.json";
+        'https://flutter-shop-app-76334-default-rtdb.firebaseio.com/products/${productId}.json?auth=${_auth.token}';
     http.delete(url);
     _items.removeWhere((element) => element.id == productId);
     notifyListeners();

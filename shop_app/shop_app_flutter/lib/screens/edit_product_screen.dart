@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app_flutter/providers/product.dart';
 import 'package:shop_app_flutter/providers/products.dart';
 
 class EditProductScreen extends StatefulWidget {
@@ -17,7 +16,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
   var _product = Product(
-      id: null, title: null, description: null, price: 0.0, imageUrl: null);
+      id: null,
+      title: null,
+      description: null,
+      price: 0.0,
+      imageUrl: null,
+      isFavorite: false);
   var _isInit = true;
   var _isLoading = false;
 
