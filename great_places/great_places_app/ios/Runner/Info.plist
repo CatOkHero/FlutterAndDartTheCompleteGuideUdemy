@@ -47,5 +47,9 @@
 	<string>Camera required</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone for video required</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location is required</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Location is required</string>
 </dict>
 </plist>
