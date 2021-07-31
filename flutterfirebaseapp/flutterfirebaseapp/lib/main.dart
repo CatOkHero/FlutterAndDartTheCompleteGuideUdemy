@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebaseapp/screens/auth_screen.dart';
-import 'package:flutter_firebaseapp/screens/chat_screen.dart';
+import 'package:flutterfirebaseapp/screens/auth_screen.dart';
+import 'package:flutterfirebaseapp/screens/chat_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await firebase_core.Firebase.initializeApp();
   runApp(MyApp());
 }
 
